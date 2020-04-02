@@ -112,7 +112,7 @@ systemctl status kubelet
 ```
 17. Check node, do it on master
 ```
-kubelet get nodes
+kubectl get nodes
 ```
 
 #### Don't forget to stop and disable networkManager
