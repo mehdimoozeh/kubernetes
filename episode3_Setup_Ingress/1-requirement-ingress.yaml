@@ -1,0 +1,159 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: openresty-configuration
+  namespace: mycluster
+  labels:
+    app.kubernetes.io/name: openresty-ingress
+    app.kubernetes.io/part-of: mycluster
+data:
+#  ssl-ciphers: ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS;
+#  ssl-protocols: TLSv1 TLSv1.1 TLSv1.2
+  enable-vts-status: "true"
+#  worker-shutdown-timeout: "6h"
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: openresty-ingress-serviceaccount
+  namespace: mycluster
+  labels:
+    app.kubernetes.io/name: openresty-ingress
+    app.kubernetes.io/part-of: mycluster
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRole
+metadata:
+  name: openresty-ingress-clusterrole
+  labels:
+    app.kubernetes.io/name: openresty-ingress
+    app.kubernetes.io/part-of: mycluster
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+      - endpoints
+      - nodes
+      - pods
+      - secrets
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - nodes
+    verbs:
+      - get
+  - apiGroups:
+      - ""
+    resources:
+      - services
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - "extensions"
+      - "networking.k8s.io"
+    resources:
+      - ingresses
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+        - events
+    verbs:
+        - create
+        - patch
+  - apiGroups:
+      - "extensions"
+    resources:
+      - ingresses/status
+    verbs:
+      - update
+
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: Role
+metadata:
+  name: openresty-ingress-role
+  namespace: mycluster
+  labels:
+    app.kubernetes.io/name: openresty-ingress
+    app.kubernetes.io/part-of: mycluster
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+      - pods
+      - secrets
+      - namespaces
+    verbs:
+      - get
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+    resourceNames:
+      # Defaults to "<election-id>-<ingress-class>"
+      # Here: "<ingress-controller-leader>-<nginx>"
+      # This has to be adapted if you change either parameter
+      # when launching the nginx-ingress-controller.
+      - "ingress-controller-leader-openresty"
+    verbs:
+      - get
+      - update
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+    verbs:
+      - create
+  - apiGroups:
+      - ""
+    resources:
+      - endpoints
+    verbs:
+      - get
+
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: RoleBinding
+metadata:
+  name: openresty-ingress-role-binding
+  namespace: mycluster
+  labels:
+    app.kubernetes.io/name: openresty-ingress
+    app.kubernetes.io/part-of: mycluster
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: openresty-ingress-role
+subjects:
+  - kind: ServiceAccount
+    name: openresty-ingress-serviceaccount
+    namespace: mycluster
+
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: openresty-ingress-clusterrole-binding
+  labels:
+    app.kubernetes.io/name: openresty-ingress
+    app.kubernetes.io/part-of: mycluster
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: openresty-ingress-clusterrole
+subjects:
+  - kind: ServiceAccount
+    name: openresty-ingress-serviceaccount
+    namespace: mycluster
+---
