@@ -30,7 +30,7 @@ spec:
           args:
             - /nginx-ingress-controller
 #            - --default-backend-service=$(POD_NAMESPACE)/maintenance
-#            - --default-ssl-certificate=$(POD_NAMESPACE)/psdt-ca
+#            - --default-ssl-certificate=$(POD_NAMESPACE)/something-ca
             - --configmap=$(POD_NAMESPACE)/openresty-configuration
 #            - --tcp-services-configmap=$(POD_NAMESPACE)/tcp-services
 #            - --udp-services-configmap=$(POD_NAMESPACE)/udp-services
