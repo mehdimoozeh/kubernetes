@@ -7,10 +7,8 @@ urls = (
 app = web.application(urls, globals())
 
 class hello:
-    def GET(self, name):
-        if not name:
-            name = 'World'
-        return 'Hello, ' + os.environ['NAME'] + '!'
+    def GET(self):
+        return 'My name is ' + os.environ['APP_NAME'] + '!'
 
 if __name__ == "__main__":
     app.run()
