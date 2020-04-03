@@ -87,12 +87,13 @@ systemctl enable kubelet
 ```
 kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=[MASTER NODE IP]
 ```
+#### Attention to the result and save commands
 13. Edit kubelet file
 ```
 nano /etc/sysconfig/kubelet
 ```
 ```
-KUBELET_EXTRA_ARGS=--address=10.0.0.X --node-ip=[MASTER NODE IP] --runtime-cgroups=/sys/fs/cgroup/systemd/system.slice --kubelet-cgroups=/sys/fs/cgroup/systemd/system.slice
+KUBELET_EXTRA_ARGS=--address=[MASTER NODE IP] --node-ip=[MASTER NODE IP] --runtime-cgroups=/sys/fs/cgroup/systemd/system.slice --kubelet-cgroups=/sys/fs/cgroup/systemd/system.slice
 ```
 14. Edit kubelet config  
 Add **cgroupDriver: systemd**
