@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: socket
+  namespace: mycluster
+  labels:
+    app.teamdev.ir/name: socket
+    app.teamdev.ir/version: "1.0"
+    app.teamdev.ir/service: socket
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.teamdev.ir/name: socket
+      app.teamdev.ir/version: "1.0"
+      app.teamdev.ir/service: socket
+  template:
+    metadata:
+      labels:
+        app.teamdev.ir/name: socket
+        app.teamdev.ir/version: "1.0"
+        app.teamdev.ir/service: socket
+    spec:
+      containers:
+        - name: socket
+          image: registry.gitlab.com/mohammadmoozeh/kubernetes/socket:1.0
+          imagePullPolicy: Always
+#          envFrom:
+#            - configMapRef:
+#                name: socket-config
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          ports:
+            - containerPort: 3000
+      imagePullSecrets:
+        - name: gitlab-registry-credential
+      terminationGracePeriodSeconds: 5
+#      affinity:
+#        nodeAffinity:
+#          requiredDuringSchedulingIgnoredDuringExecution:
+#            nodeSelectorTerms:
+#              - matchExpressions:
+#                  - key: kubernetes.io/hostname
+#                    operator: "In"
+#                    values:
+#                      - node1

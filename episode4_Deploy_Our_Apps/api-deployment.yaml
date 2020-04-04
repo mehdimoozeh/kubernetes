@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+  namespace: mycluster
+  labels:
+    app.teamdev.ir/name: api
+    app.teamdev.ir/version: "1.0"
+    app.teamdev.ir/service: api-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.teamdev.ir/name: api
+      app.teamdev.ir/version: "1.0"
+      app.teamdev.ir/service: api-service
+  template:
+    metadata:
+      labels:
+        app.teamdev.ir/name: api
+        app.teamdev.ir/version: "1.0"
+        app.teamdev.ir/service: api-service
+    spec:
+      containers:
+        - name: api
+          image: registry.gitlab.com/mohammadmoozeh/kubernetes/api:1.0
+          imagePullPolicy: Always
+#          envFrom:
+#            - configMapRef:
+#                name: api-config
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          ports:
+            - containerPort: 8080
+      imagePullSecrets:
+        - name: gitlab-registry-credential
+      terminationGracePeriodSeconds: 5
+#      affinity:
+#        nodeAffinity:
+#          requiredDuringSchedulingIgnoredDuringExecution:
+#            nodeSelectorTerms:
+#              - matchExpressions:
+#                  - key: kubernetes.io/hostname
+#                    operator: "In"
+#                    values:
+#                      - node1

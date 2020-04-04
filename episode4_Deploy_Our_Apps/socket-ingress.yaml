@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: socket
+  namespace: mycluster
+  annotations:
+    nginx.ingress.kubernetes.io/enable-cors: "false"
+    nginx.ingress.kubernetes.io/enable-rewrite-log: "true"
+    nginx.ingress.kubernetes.io/enable-access-log: "true"
+    kubernetes.io/ingress.class: "openresty"
+spec:
+  rules:
+    - host: teamdev.ir
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: socket-service
+              servicePort: 3000
