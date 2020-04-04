@@ -1,42 +1,42 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: api
+  name: socket-green
   namespace: mycluster
   labels:
-    app.teamdev.ir/name: api
+    app.teamdev.ir/name: socket-green
     app.teamdev.ir/version: "1.0"
-    app.teamdev.ir/service: api-service
+    app.teamdev.ir/service: socket-green
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
-      app.teamdev.ir/name: api
+      app.teamdev.ir/name: socket-green
       app.teamdev.ir/version: "1.0"
-      app.teamdev.ir/service: api-service
+      app.teamdev.ir/service: socket-green
   template:
     metadata:
       labels:
-        app.teamdev.ir/name: api
+        app.teamdev.ir/name: socket-green
         app.teamdev.ir/version: "1.0"
-        app.teamdev.ir/service: api-service
+        app.teamdev.ir/service: socket-green
     spec:
       containers:
-        - name: api
-          image: registry.gitlab.com/mohammadmoozeh/kubernetes/api:1.0
+        - name: socket
+          image: registry.gitlab.com/mohammadmoozeh/kubernetes/socket:1.0
           imagePullPolicy: Always
 #          envFrom:
 #            - configMapRef:
-#                name: api-config
+#                name: socket-config
           env:
             - name: POD_NAME
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
             - name: APP_NAME
-              value: "SMILE :)"
+              value: "GREEN"
           ports:
-            - containerPort: 8080
+            - containerPort: 3000
       imagePullSecrets:
         - name: gitlab-registry-credential
       terminationGracePeriodSeconds: 5

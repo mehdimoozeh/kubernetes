@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: openresty-ingress-controller
+  namespace: mycluster
+  labels:
+    app.kubernetes.io/name: openresty-ingress
+    app.kubernetes.io/part-of: mycluster
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: openresty-ingress
+      app.kubernetes.io/part-of: mycluster
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: openresty-ingress
+        app.kubernetes.io/part-of: mycluster
+    spec:
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      terminationGracePeriodSeconds: 60
+      serviceAccountName: openresty-ingress-serviceaccount
+      containers:
+        - name: openresty-ingress-controller
+          image: quay.io/kubernetes-ingress-controller/nginx-ingress-controller:0.30.0
+          args:
+            - /nginx-ingress-controller
+            - --configmap=$(POD_NAMESPACE)/openresty-configuration
+            - --annotations-prefix=nginx.ingress.kubernetes.io
+            - --ingress-class=openresty
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          ports:
+          - name: http
+            containerPort: 80
+            hostPort: 80
+          - name: nginx-status
+            containerPort: 10254
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: "In"
+                values:
+                - node1

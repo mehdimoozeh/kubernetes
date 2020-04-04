@@ -33,6 +33,8 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
+            - name: APP_NAME
+              value: "Mehdi"
           ports:
             - containerPort: 3000
       imagePullSecrets:

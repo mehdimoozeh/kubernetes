@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: coffee
+  namespace: mycluster
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: coffee
+  template:
+    metadata:
+      labels:
+        app: coffee
+    spec:
+      containers:
+      - name: coffee
+        image: nginxdemos/nginx-hello
+        env:
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+        ports:
+        - containerPort: 8080

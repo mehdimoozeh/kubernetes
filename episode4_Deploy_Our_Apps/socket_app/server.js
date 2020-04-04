@@ -3,7 +3,7 @@ const app = require('express')();
 const http = require('http').createServer(app);
 const io = require('socket.io')(http);
 
-app.get('/', (req, res) => {
+app.get('*', (req, res) => {
   return res.sendFile(path.join(__dirname, 'index.html'))
 });
 
@@ -11,10 +11,11 @@ io.on('connection', socket => {
   console.log('User connected :)');
   socket.on('disconnect', () => {
     console.log('User disconnected');
+    socket.close();
   });
 
   socket.on('pingServer', () => {
-    socket.emit('pingAnswer', String(new Date() + `, version: ${process.env.version}`))
+    socket.emit('pingAnswer', String(new Date() + `, version: ${process.env.APP_NAME}`))
   })
 });
 

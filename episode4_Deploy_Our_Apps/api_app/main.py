@@ -2,7 +2,7 @@ import web
 import os
 
 urls = (
-    '/(.*)', 'hello'
+    '/python', 'hello'
 )
 app = web.application(urls, globals())
 

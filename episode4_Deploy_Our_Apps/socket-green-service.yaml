@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: socket-green-service
+  namespace: mycluster
+  labels:
+    service.teamdev.ir/name: socket-green-service
+spec:
+  ports:
+    - port: 3000
+      targetPort: 3000
+      protocol: TCP
+  type: ClusterIP
+  selector:
+    app.teamdev.ir/name: socket-green
+    app.teamdev.ir/version: "1.0"
+    app.teamdev.ir/service: socket-green
+

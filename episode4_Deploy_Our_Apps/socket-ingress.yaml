@@ -15,5 +15,5 @@ spec:
         paths:
           - path: /
             backend:
-              serviceName: socket-service
+              serviceName: socket-green-service
               servicePort: 3000
